@@ -317,6 +317,34 @@ public final class Messaging {
     }
 
     /**
+     * Initiates a network call to retrieve remote In-App Message definitions from Adobe Journey
+     * Optimizer.
+     *
+     * @param callback An optional callback to be called once the proposition response has been
+     *     processed by the Messaging extension
+     */
+    public static void refreshInAppMessages(
+            @Nullable final AdobeCallback<Boolean> callback) {
+
+        final Map<String, Object> eventData = new HashMap<>();
+        eventData.put(REFRESH_MESSAGES_EVENT, true);
+        final Event refreshMessageEvent =
+                new Event.Builder(
+                        REFRESH_MESSAGES,
+                        EventType.MESSAGING,
+                        EventSource.REQUEST_CONTENT)
+                        .setEventData(eventData)
+                        .build();
+
+        if (callback != null) {
+            MessagingExtension.addCompletionHandler(
+                    new CompletionHandler(refreshMessageEvent.getUniqueIdentifier(), callback));
+        }
+
+        MobileCore.dispatchEvent(refreshMessageEvent);
+    }
+
+    /**
      * Dispatches an event to retrieve the previously fetched (and cached) content card or code
      * based content from the SDK for the provided surfaces. If the content for one or more surfaces
      * isn't previously cached in the SDK, it will not be retrieved from Adobe Journey Optimizer via

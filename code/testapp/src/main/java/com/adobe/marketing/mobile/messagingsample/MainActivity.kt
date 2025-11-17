@@ -34,6 +34,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.adobe.marketing.mobile.*
 import com.adobe.marketing.mobile.messaging.NotificationInteractionReceiver
+import com.adobe.marketing.mobile.messaging.Surface
 import com.adobe.marketing.mobile.messagingsample.databinding.ActivityMainBinding
 import com.adobe.marketing.mobile.services.ServiceProvider
 import com.adobe.marketing.mobile.services.ui.InAppMessage
@@ -399,6 +400,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getNotification(content: String): Notification? {
+
+        Messaging.updatePropositionsForSurfaces(
+            listOf(Surface())
+        ) { Log.d("Sagar", if(it) "Retrieved Successfully" else "Retrieval failed") }
+
         val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, "default")
         builder.setContentTitle("Scheduled Notification")
         builder.setContentText(content)

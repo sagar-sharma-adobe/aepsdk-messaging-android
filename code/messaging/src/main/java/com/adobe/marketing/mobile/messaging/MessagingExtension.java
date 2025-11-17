@@ -45,7 +45,7 @@ public final class MessagingExtension extends Extension {
 
     final EdgePersonalizationResponseHandler edgePersonalizationResponseHandler;
     private boolean initialMessageFetchComplete = false;
-    final LaunchRulesEngine messagingRulesEngine;
+    final MessagingRulesEngine messagingRulesEngine;
     final ContentCardRulesEngine contentCardRulesEngine;
     private SerialWorkDispatcher<Event> serialWorkDispatcher;
 
@@ -80,14 +80,14 @@ public final class MessagingExtension extends Extension {
     @VisibleForTesting
     MessagingExtension(
             final ExtensionApi extensionApi,
-            final LaunchRulesEngine messagingRulesEngine,
+            final MessagingRulesEngine messagingRulesEngine,
             final ContentCardRulesEngine contentCardRulesEngine,
             final EdgePersonalizationResponseHandler edgePersonalizationResponseHandler) {
         super(extensionApi);
         this.messagingRulesEngine =
                 messagingRulesEngine != null
                         ? messagingRulesEngine
-                        : new LaunchRulesEngine(MessagingConstants.RULES_ENGINE_NAME, extensionApi);
+                        : new MessagingRulesEngine(MessagingConstants.RULES_ENGINE_NAME, extensionApi);
         this.contentCardRulesEngine =
                 contentCardRulesEngine != null
                         ? contentCardRulesEngine
@@ -165,6 +165,11 @@ public final class MessagingExtension extends Extension {
                         MessagingConstants.EventType.MESSAGING,
                         MessagingConstants.EventSource.EVENT_HISTORY_WRITE,
                         this::processEvent);
+        getApi().registerEventListener(
+                EventType.GENERIC_LIFECYCLE,
+                EventSource.REQUEST_CONTENT,
+                this::processLifecycleEvent
+        );
 
         // register listener for handling debug events
         getApi().registerEventListener(EventType.SYSTEM, EventSource.DEBUG, this::handleDebugEvent);
@@ -296,7 +301,7 @@ public final class MessagingExtension extends Extension {
                     PropositionItem.fromSchemaConsequenceEvent(event));
             return;
         }
-        messagingRulesEngine.processEvent(event);
+        messagingRulesEngine.process(event);
         edgePersonalizationResponseHandler.updateQualifiedContentCardsForEvent(event);
     }
 
@@ -361,6 +366,7 @@ public final class MessagingExtension extends Extension {
                     SELF_TAG,
                     "Processing manual request to refresh In-App Message definitions from the"
                             + " remote.");
+            lastRefreshTime = System.currentTimeMillis();
             edgePersonalizationResponseHandler.fetchPropositions(eventToProcess, null);
         } else if (InternalMessagingUtils.isUpdatePropositionsEvent(eventToProcess)) {
             // validate update propositions event then retrieve propositions via an Edge extension
@@ -901,6 +907,31 @@ public final class MessagingExtension extends Extension {
                             + " %s",
                     e.getMessage());
         }
+    }
+
+    private volatile long lastRefreshTime = 0L;
+    private final long REFRESH_RATE_LIMIT_MS = 60000L; // 1 minute
+    private void processLifecycleEvent(final Event event) {
+//        if (!InternalMessagingUtils.isLifecycleStartEvent(event)) {
+//            return;
+//        }
+
+        final long currentTime = System.currentTimeMillis();
+        if (currentTime - lastRefreshTime < REFRESH_RATE_LIMIT_MS) {
+            Log.debug(
+                    MessagingConstants.LOG_TAG,
+                    SELF_TAG,
+                    "Skipping automatic refresh of in-app messages, refresh rate limit not"
+                            + " reached.");
+            return;
+        }
+
+        lastRefreshTime = currentTime;
+        Log.debug(
+                MessagingConstants.LOG_TAG,
+                SELF_TAG,
+                "Automatic refresh of in-app messages on lifecycle start event.");
+        edgePersonalizationResponseHandler.fetchPropositions(event, null);
     }
 
     private boolean hasValidSharedState(final String extensionName, final Event event) {

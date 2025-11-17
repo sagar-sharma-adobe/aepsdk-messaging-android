@@ -85,7 +85,7 @@ public class MessagingExtensionTests {
     @Mock NamedCollection mockNamedCollection;
     @Mock CacheService mockCacheService;
     @Mock DeviceInforming mockDeviceInfoService;
-    @Mock LaunchRulesEngine mockMessagingRulesEngine;
+    @Mock MessagingRulesEngine mockMessagingRulesEngine;
     @Mock ContentCardRulesEngine mockContentCardRulesEngine;
     @Mock EdgePersonalizationResponseHandler mockEdgePersonalizationResponseHandler;
     @Mock SharedStateResult mockConfigData;
