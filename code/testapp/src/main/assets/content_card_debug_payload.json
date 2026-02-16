@@ -1,0 +1,172 @@
+{
+  "handle": [
+    {
+      "payload": [
+        {
+          "scope": "mobileapp://com.adobe.marketing.mobile.messagingsample/transactions_list",
+          "id": "4e4fe875-8de1-4ca6-97c4-ff5975163448",
+          "scopeDetails": {
+            "characteristics": {
+              "eventToken": "eyJtZXNzYWdlRXhlY3V0aW9uIjp7Im1lc3NhZ2VFeGVjdXRpb25JRCI6IlVFOkluYm91bmQiLCJtZXNzYWdlSUQiOiJlNDNlZWUxNS00MmI1LTQ3ODgtYjI4My03ZWJjNjdlOGVlNjYiLCJtZXNzYWdlUHVibGljYXRpb25JRCI6IjcyZTk2OTZkLTJhM2UtNGM4ZC05ODg0LWY4ZDc4YTVmZGNhOSIsIm1lc3NhZ2VUeXBlIjoibWFya2V0aW5nIiwiam91cm5leVZlcnNpb25JRCI6ImI4YTE2MmQ5LTlmNzMtNDBhNS04ZTFmLTk5YzVjZjIzNTNkZiIsImpvdXJuZXlBY3Rpb25JRCI6IjY4YTIxMDE1LWUxNDktNDBhMi04MTRlLWZjMTA5ZDVlNmVhZiJ9LCJtZXNzYWdlUHJvZmlsZSI6eyJtZXNzYWdlUHJvZmlsZUlEIjoiMjc2MzI0ZjktZDRlOC00NTE5LTkyNzUtYzFlMjk1Y2I1MDFjIiwiY2hhbm5lbCI6eyJfaWQiOiJodHRwczovL25zLmFkb2JlLmNvbS94ZG0vY2hhbm5lbHMvbWVzc2FnZUZlZWQiLCJfdHlwZSI6Imh0dHBzOi8vbnMuYWRvYmUuY29tL3hkbS9jaGFubmVsLXR5cGVzL21lc3NhZ2VGZWVkIn0sImlzVGVzdEV4ZWN1dGlvbiI6ZmFsc2V9fQ=="
+            },
+            "decisionProvider": "AJO",
+            "rank": 2,
+            "correlationID": "72e9696d-2a3e-4c8d-9884-f8d78a5fdca9-0",
+            "activity": {
+              "priority": 0,
+              "matchedSurfaces": ["mobileapp://com.adobe.marketing.mobile.messagingsample/transactions_list"],
+              "id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7"
+            }
+          },
+          "items": [
+            {
+              "data": {
+                "version": 1,
+                "rules": [
+                  {
+                    "condition": {
+                      "definition": {
+                        "conditions": [
+                          {"definition": {"events": [{"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "disqualify"}], "value": 0, "matcher": "eq"}, "type": "historical"},
+                          {"definition": {"matcher": "lt", "values": [2556104400], "key": "~timestampu"}, "type": "matcher"},
+                          {"type": "group", "definition": {"logic": "or", "conditions": [
+                            {"type": "group", "definition": {"conditions": [
+                              {"type": "matcher", "definition": {"values": ["com.adobe.eventType.lifecycle"], "matcher": "eq", "key": "~type"}},
+                              {"type": "matcher", "definition": {"values": ["com.adobe.eventSource.applicationLaunch"], "key": "~source", "matcher": "eq"}},
+                              {"type": "matcher", "definition": {"matcher": "ex", "key": "~state.com.adobe.module.lifecycle/lifecyclecontextdata.launchevent"}}
+                            ], "logic": "and"}},
+                            {"type": "historical", "definition": {"matcher": "ge", "value": 1, "events": [{"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "unqualify"}, {"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "trigger"}], "searchType": "mostRecent"}},
+                            {"definition": {"searchType": "mostRecent", "events": [{"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "unqualify"}, {"iam.eventType": "qualify", "iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7"}], "matcher": "eq", "value": 1}, "type": "historical"}
+                          ]}}
+                        ],
+                        "logic": "and"
+                      },
+                      "type": "group"
+                    },
+                    "consequences": [
+                      {
+                        "type": "schema",
+                        "id": "7083d3b0-ee35-41de-b85a-f043e7c35d2a",
+                        "detail": {
+                          "data": {
+                            "meta": {
+                              "surface": "mobileapp://com.adobe.marketing.mobile.messagingsample/transactions_list",
+                              "adobe": {"template": "LargeImage"}
+                            },
+                            "expiryDate": 2556104400,
+                            "contentType": "application/json",
+                            "publishedDate": 1770853183,
+                            "content": {
+                              "dismissBtn": {"style": "simple"},
+                              "actionUrl": "",
+                              "body": {"content": "Content Card Adobe Session Test 2_Journey_Schedule"},
+                              "image": {"alt": "", "url": "https://dhd6icpnkih4p.cloudfront.net/04667d08-edf1-4f47-a67d-08edf1bf47c8/urn:aaid:aem:b0fb62ed-8c50-4f13-81fe-f9740ddf34f2/oak:1.0::ci:0a2552d15221660144dd6975ede40791/705e9c4a-9d6d-33bf-806d-e449a05edcd2"},
+                              "buttons": [],
+                              "title": {"content": "Content Card Adobe Session Test 2_Journey_Schedule"}
+                            }
+                          },
+                          "id": "7083d3b0-ee35-41de-b85a-f043e7c35d2a",
+                          "schema": "https://ns.adobe.com/personalization/message/content-card"
+                        }
+                      }
+                    ],
+                    "meta": {"ruleType": "card"}
+                  },
+                  {"consequences": [{"id": "7c290412-d630-428f-a58e-49eeb7aad126", "type": "schema", "detail": {"data": {"operation": "insert", "content": {"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "qualify"}}, "schema": "https://ns.adobe.com/personalization/eventHistoryOperation", "id": "e971b3f8-c730-421e-8257-0d648ad22cdd"}}], "condition": {"type": "group", "definition": {"conditions": [
+                    {"definition": {"events": [{"iam.eventType": "disqualify", "iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7"}], "matcher": "eq", "value": 0}, "type": "historical"},
+                    {"type": "matcher", "definition": {"values": [2556104400], "key": "~timestampu", "matcher": "lt"}},
+                    {"definition": {"logic": "and", "conditions": [
+                      {"type": "matcher", "definition": {"values": ["com.adobe.eventType.lifecycle"], "key": "~type", "matcher": "eq"}},
+                      {"definition": {"values": ["com.adobe.eventSource.applicationLaunch"], "matcher": "eq", "key": "~source"}, "type": "matcher"},
+                      {"type": "matcher", "definition": {"matcher": "ex", "key": "~state.com.adobe.module.lifecycle/lifecyclecontextdata.launchevent"}}
+                    ]}, "type": "group"},
+                    {"type": "historical", "definition": {"searchType": "mostRecent", "matcher": "ne", "events": [{"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "unqualify"}, {"iam.eventType": "qualify", "iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7"}], "value": 1}}
+                  ], "logic": "and"}}, "meta": {"ruleType": "qualify"}},
+                  {"consequences": [{"detail": {"schema": "https://ns.adobe.com/personalization/eventHistoryOperation", "id": "cfe9ae9d-2d46-4da2-9ab3-d5471b576a15", "data": {"content": {"iam.eventType": "unqualify", "iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df#f9f03070-6a05-4e60-af29-ad0bb54b79c7"}, "operation": "insert"}}, "type": "schema", "id": "024cd62b-ad5e-4882-8421-bd62b060eb7d"}], "meta": {"ruleType": "unqualify"}, "condition": {"definition": {"conditions": [
+                    {"definition": {"events": [{"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "disqualify"}], "matcher": "eq", "value": 0}, "type": "historical"},
+                    {"type": "group", "definition": {"logic": "and", "conditions": [
+                      {"definition": {"matcher": "eq", "values": ["com.adobe.eventType.edge"], "key": "~type"}, "type": "matcher"},
+                      {"type": "matcher", "definition": {"key": "~source", "values": ["com.adobe.eventSource.requestContent"], "matcher": "eq"}},
+                      {"definition": {"key": "xdm.eventType", "matcher": "eq", "values": ["decisioning.propositionDismiss"]}, "type": "matcher"},
+                      {"type": "matcher", "definition": {"matcher": "eq", "values": ["b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7"], "key": "xdm._experience.decisioning.propositions.0.scopeDetails.activity.id"}}
+                    ]}},
+                    {"type": "matcher", "definition": {"values": [2556104400], "key": "~timestampu", "matcher": "lt"}},
+                    {"type": "historical", "definition": {"searchType": "mostRecent", "events": [{"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "unqualify"}, {"iam.id": "b8a162d9-9f73-40a5-8e1f-99c5cf2353df_68a21015-e149-40a2-814e-fc109d5e6eaf#f9f03070-6a05-4e60-af29-ad0bb54b79c7", "iam.eventType": "qualify"}], "value": 0, "matcher": "ne"}}
+                  ], "logic": "and"}, "type": "group"}}
+                ]
+              },
+              "id": "fa6248e3-a5e2-4f23-b7a2-b5daa71729c1",
+              "schema": "https://ns.adobe.com/personalization/ruleset-item"
+            }
+          ]
+        },
+        {
+          "id": "da0c1782-ef4b-4f93-bd6f-4c40cf5c249c",
+          "scopeDetails": {
+            "rank": 1,
+            "decisionProvider": "AJO",
+            "characteristics": {"eventToken": "eyJtZXNzYWdlRXhlY3V0aW9uIjp7Im1lc3NhZ2VFeGVjdXRpb25JRCI6IlVFOkluYm91bmQiLCJtZXNzYWdlSUQiOiJkODk4ZTZmZS00MTNkLTRiMzYtODA3Zi1iMjQ4NjE5NTZhYWEiLCJtZXNzYWdlUHVibGljYXRpb25JRCI6IjA5N2FjYzkwLWJjMDEtNDU1Yi1hYTU3LTA2NzFiMzQ5YmE1MCIsIm1lc3NhZ2VUeXBlIjoibWFya2V0aW5nIiwiY2FtcGFpZ25JRCI6ImYwYTcxMWFiLTJmYTktNDk2OS1hOGZjLTYzZThjNDhjNDViNiIsImNhbXBhaWduVmVyc2lvbklEIjoiNzBkMDYxNmQtZmM2MS00ZTIyLWFhOGEtMTE5ODQzYThiNmIxIiwiY2FtcGFpZ25BY3Rpb25JRCI6ImY4YmRhMDFjLTZkOWMtNDgwNS05MzRlLWVlYTE2NDEzOGQ2MSJ9LCJtZXNzYWdlUHJvZmlsZSI6eyJtZXNzYWdlUHJvZmlsZUlEIjoiOTE1MzA5ODQtYzIwYi00MmFkLThkYzEtZDgwZDEwNDA3ZGE4IiwiY2hhbm5lbCI6eyJfaWQiOiJodHRwczovL25zLmFkb2JlLmNvbS94ZG0vY2hhbm5lbHMvbWVzc2FnZUZlZWQiLCJfdHlwZSI6Imh0dHBzOi8vbnMuYWRvYmUuY29tL3hkbS9jaGFubmVsLXR5cGVzL21lc3NhZ2VGZWVkIn19fQ=="},
+            "correlationID": "097acc90-bc01-455b-aa57-0671b349ba50-0",
+            "activity": {
+              "priority": 0,
+              "matchedSurfaces": ["mobileapp://com.adobe.marketing.mobile.messagingsample/transactions_list"],
+              "id": "f0a711ab-2fa9-4969-a8fc-63e8c48c45b6#f8bda01c-6d9c-4805-934e-eea164138d61"
+            }
+          },
+          "scope": "mobileapp://com.adobe.marketing.mobile.messagingsample/transactions_list",
+          "items": [
+            {
+              "id": "d31443c2-9321-426e-8353-5815ca851816",
+              "data": {
+                "version": 1,
+                "rules": [
+                  {
+                    "meta": {"ruleType": "card"},
+                    "consequences": [
+                      {
+                        "id": "f69d2ad4-9929-4ff0-92b8-3a76783a1e70",
+                        "detail": {
+                          "data": {
+                            "expiryDate": 2051182800,
+                            "meta": {
+                              "adobe": {"template": "SmallImage"},
+                              "surface": "mobileapp://com.adobe.marketing.mobile.messagingsample/transactions_list"
+                            },
+                            "publishedDate": 1769745298,
+                            "contentType": "application/json",
+                            "content": {
+                              "body": {"content": "For a limited time, your tap payments could go in the running to win big!"},
+                              "dismissBtn": {"style": "simple"},
+                              "title": {"content": "Tap, Pay, Win (30th Jan)!"},
+                              "image": {"url": "https://www.amp.com.au/content/dam/amp-2024/images/products/digital-bank/tap-pay-win-illustrated-hand-holding-card-736x736.png", "alt": "AMP Brand Logo"},
+                              "buttons": [],
+                              "actionUrl": ""
+                            }
+                          },
+                          "id": "f69d2ad4-9929-4ff0-92b8-3a76783a1e70",
+                          "schema": "https://ns.adobe.com/personalization/message/content-card"
+                        },
+                        "type": "schema"
+                      }
+                    ],
+                    "condition": {
+                      "definition": {
+                        "conditions": [
+                          {"definition": {"matcher": "lt", "key": "~timestampu", "values": [2051182800]}, "type": "matcher"},
+                          {"definition": {"events": [{"iam.id": "f0a711ab-2fa9-4969-a8fc-63e8c48c45b6#f8bda01c-6d9c-4805-934e-eea164138d61", "iam.eventType": "disqualify"}], "matcher": "eq"}, "type": "historical"}
+                        ],
+                        "logic": "and"
+                      },
+                      "type": "group"
+                    }
+                  }
+                ]
+              },
+              "schema": "https://ns.adobe.com/personalization/ruleset-item"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

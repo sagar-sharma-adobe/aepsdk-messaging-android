@@ -507,6 +507,55 @@ public final class Messaging {
     }
 
     /**
+     * Injects a personalization payload as if it were the response to a surface request. Used by
+     * test/demo apps to replicate client behavior without a network call. The payload must be the
+     * list of proposition maps (same shape as {@code handle[].payload} or {@code handle[].payloads}
+     * from an Edge response).
+     *
+     * @param surfaces Surfaces that were "requested" (must match the scope in the payload).
+     * @param propositionPayloads List of proposition maps (id, scope, scopeDetails, items).
+     */
+    public static void injectPersonalizationResponseForTesting(
+            @NonNull final List<Surface> surfaces,
+            @NonNull final List<Map<String, Object>> propositionPayloads) {
+        if (surfaces == null || surfaces.isEmpty()
+                || propositionPayloads == null || propositionPayloads.isEmpty()) {
+            Log.warning(
+                    LOG_TAG,
+                    CLASS_NAME,
+                    "injectPersonalizationResponseForTesting: surfaces or propositionPayloads null"
+                            + " or empty.");
+            return;
+        }
+        final List<Map<String, Object>> validSurfacesFlattened = new ArrayList<>();
+        for (final Surface surface : surfaces) {
+            if (surface.isValid()) {
+                validSurfacesFlattened.add(surface.toEventData());
+            }
+        }
+        if (validSurfacesFlattened.isEmpty()) {
+            Log.warning(
+                    LOG_TAG,
+                    CLASS_NAME,
+                    "injectPersonalizationResponseForTesting: no valid surfaces.");
+            return;
+        }
+        final Map<String, Object> eventData = new HashMap<>();
+        eventData.put(SURFACES, validSurfacesFlattened);
+        eventData.put(
+                "payload",
+                propositionPayloads);
+        final Event injectEvent =
+                new Event.Builder(
+                                "Inject personalization response",
+                        "com.adobe.eventType.messaging",
+                        "com.adobe.eventSource.messaging.debugInjectResponse")
+                        .setEventData(eventData)
+                        .build();
+        MobileCore.dispatchEvent(injectEvent);
+    }
+
+    /**
      * Invokes fail method with the provided {@code error}, if the callback is an instance of {@code
      * AdobeCallbackWithError}.
      *

@@ -13,8 +13,11 @@ package com.adobe.marketing.mobile.messagingsample
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -72,6 +75,8 @@ class ScrollingFeedActivity : AppCompatActivity() {
     private lateinit var contentCardUIProvider: ContentCardUIProvider
     private lateinit var contentCardViewModel: AepContentCardViewModel
     private lateinit var contentCardCallback: ContentCardCallback
+    private lateinit var surfaces: MutableList<Surface>
+    private var useDebugPayload = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +84,12 @@ class ScrollingFeedActivity : AppCompatActivity() {
         binding = ActivityScrollingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // staging environment - CJM Stage, AJO Web (VA7)
-        // surface for content card -
-        // mobileapp://com.adobe.marketing.mobile.messagingsample/card/ms
-        val surfaces = mutableListOf<Surface>()
-        val surface = Surface("largeAndImageOnlyCards")
-        surfaces.add(surface)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        // surface for content card - must match scope in your payload (e.g. transactions_list)
+        surfaces = mutableListOf(Surface("transactions_list"))
+        val surface = surfaces[0]
 
         // Initialize the ContentCardUIProvider
         contentCardUIProvider = ContentCardUIProvider(surface)
@@ -97,11 +102,34 @@ class ScrollingFeedActivity : AppCompatActivity() {
 
         contentCardCallback = ContentCardCallback()
 
-        // Set a click listener for refresh button which calls the API for fetch content cards from Edge
+        // Set a click listener for refresh button: either inject debug payload or fetch from Edge
         val refreshButton: ImageButton = findViewById(R.id.refreshButton)
         refreshButton.setOnClickListener {
-            Messaging.updatePropositionsForSurfaces(surfaces)
-            contentCardViewModel.refreshContent()
+            if (useDebugPayload) {
+                val content = try {
+                    assets.open(DebugPayloadHelper.ASSET_FILENAME).use {
+                        DebugPayloadHelper.readAssetFile(it)
+                    }
+                } catch (_: Exception) {
+                    null
+                }
+                val payload = content?.let { DebugPayloadHelper.loadPayloadFromAssets(it) }
+                if (!payload.isNullOrEmpty()) {
+                    Messaging.injectPersonalizationResponseForTesting(surfaces, payload)
+                    contentCardViewModel.refreshContent()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Debug payload file not found or invalid. Using network.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Messaging.updatePropositionsForSurfaces(surfaces)
+                    contentCardViewModel.refreshContent()
+                }
+            } else {
+                Messaging.updatePropositionsForSurfaces(surfaces)
+                contentCardViewModel.refreshContent()
+            }
         }
 
         binding.composeView.apply {
@@ -114,6 +142,27 @@ class ScrollingFeedActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_scrolling, menu)
+        menu.findItem(R.id.action_use_debug_payload)?.isChecked = useDebugPayload
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_use_debug_payload -> {
+                useDebugPayload = !useDebugPayload
+                item.isChecked = useDebugPayload
+                Toast.makeText(
+                    this,
+                    if (useDebugPayload) "Using debug payload from assets" else "Using network",
+                    Toast.LENGTH_SHORT
+                ).show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     @Composable
     private fun AepContentCardList(viewModel: AepContentCardViewModel) {

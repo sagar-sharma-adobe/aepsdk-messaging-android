@@ -356,6 +356,9 @@ public final class MessagingConstants {
         static final String REQUEST_CONTENT = "com.adobe.eventSource.requestContent";
         static final String NOTIFICATION = "com.adobe.eventSource.notification";
         static final String EVENT_HISTORY_WRITE = "com.adobe.eventSource.eventHistoryWrite";
+        /** Used by test/demo apps to inject a personalization payload without a network request. */
+        static final String DEBUG_INJECT_RESPONSE =
+                "com.adobe.eventSource.messaging.debugInjectResponse";
 
         private EventSource() {}
     }

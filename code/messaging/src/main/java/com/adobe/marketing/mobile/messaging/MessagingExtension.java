@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -164,6 +165,10 @@ public final class MessagingExtension extends Extension {
         getApi().registerEventListener(
                         MessagingConstants.EventType.MESSAGING,
                         MessagingConstants.EventSource.EVENT_HISTORY_WRITE,
+                        this::processEvent);
+        getApi().registerEventListener(
+                        MessagingConstants.EventType.MESSAGING,
+                        MessagingConstants.EventSource.DEBUG_INJECT_RESPONSE,
                         this::processEvent);
 
         // register listener for handling debug events
@@ -427,6 +432,34 @@ public final class MessagingExtension extends Extension {
             // validate the personalization request complete event then process the personalization
             // request data
             edgePersonalizationResponseHandler.handleProcessCompletedEvent(eventToProcess);
+        } else if (isDebugInjectResponseEvent(eventToProcess)) {
+            handleDebugInjectResponse(eventToProcess);
+        }
+    }
+
+    /**
+     * Returns true if the event is a debug inject response event (test/demo apps only).
+     */
+    private boolean isDebugInjectResponseEvent(final Event event) {
+        return event != null
+                && MessagingConstants.EventType.MESSAGING.equalsIgnoreCase(event.getType())
+                && MessagingConstants.EventSource.DEBUG_INJECT_RESPONSE.equalsIgnoreCase(
+                        event.getSource());
+    }
+
+    /**
+     * Processes a debug inject response event by registering the request and feeding the payload
+     * through the same path as a real Edge personalization response, then dispatching the
+     * completion event.
+     */
+    private void handleDebugInjectResponse(final Event event) {
+        final List<Surface> surfaces = InternalMessagingUtils.getSurfaces(event);
+        if (MessagingUtils.isNullOrEmpty(surfaces)) {
+            Log.debug(
+                    MessagingConstants.LOG_TAG,
+                    SELF_TAG,
+                    "Debug inject response ignored: surfaces null or empty.");
+            return;
         }
     }
 
@@ -904,6 +937,46 @@ public final class MessagingExtension extends Extension {
                             + " %s",
                     e.getMessage());
         }
+        final List<Map<String, Object>> payload =
+                DataReader.optTypedListOfMap(
+                        Object.class,
+                        event.getEventData(),
+                        MessagingConstants.EventDataKeys.Messaging.Inbound.Key.PAYLOAD,
+                        null);
+        if (MessagingUtils.isNullOrEmpty(payload)) {
+            Log.debug(
+                    MessagingConstants.LOG_TAG,
+                    SELF_TAG,
+                    "Debug inject response ignored: payload null or empty.");
+            return;
+        }
+        final String requestId = "INJECT_" + UUID.randomUUID().toString();
+        edgePersonalizationResponseHandler.setMessagesRequestEventId(requestId, surfaces);
+        final Map<String, Object> responseEventData = new HashMap<>();
+        responseEventData.put(
+                MessagingConstants.EventDataKeys.REQUEST_EVENT_ID, requestId);
+        responseEventData.put(
+                MessagingConstants.EventDataKeys.Messaging.Inbound.Key.PAYLOAD, payload);
+        final Event syntheticResponseEvent =
+                new Event.Builder(
+                                "Debug inject response",
+                                EventType.EDGE,
+                                MessagingConstants.EventSource.PERSONALIZATION_DECISIONS)
+                        .setEventData(responseEventData)
+                        .build();
+        edgePersonalizationResponseHandler.handleEdgePersonalizationNotification(
+                syntheticResponseEvent);
+        final Map<String, Object> completionEventData = new HashMap<>();
+        completionEventData.put(
+                MessagingConstants.EventDataKeys.Messaging.ENDING_EVENT_ID, requestId);
+        final Event completionEvent =
+                new Event.Builder(
+                                "Debug inject complete",
+                                MessagingConstants.EventType.MESSAGING,
+                                EventSource.CONTENT_COMPLETE)
+                        .setEventData(completionEventData)
+                        .build();
+        getApi().dispatch(completionEvent);
     }
 
     /**
