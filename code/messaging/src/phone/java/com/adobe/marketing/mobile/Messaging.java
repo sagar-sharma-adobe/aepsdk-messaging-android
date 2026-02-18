@@ -15,6 +15,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.adobe.marketing.mobile.messaging.CompletionHandler;
+import com.adobe.marketing.mobile.messaging.IamRefreshHandler;
 import com.adobe.marketing.mobile.messaging.MessagingExtension;
 import com.adobe.marketing.mobile.messaging.MessagingUtils;
 import com.adobe.marketing.mobile.messaging.Proposition;
@@ -34,7 +35,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class Messaging {
-    private static final String EXTENSION_VERSION = "3.6.0";
+    private static final String EXTENSION_VERSION = "3.7.0";
     private static final String LOG_TAG = "Messaging";
     private static final String CLASS_NAME = "Messaging";
 
@@ -315,16 +316,7 @@ public final class Messaging {
      * Optimizer.
      */
     public static void refreshInAppMessages() {
-        final Map<String, Object> eventData = new HashMap<>();
-        eventData.put(REFRESH_MESSAGES_EVENT, true);
-
-        final Event refreshMessageEvent =
-                new Event.Builder(
-                                REFRESH_MESSAGES, EventType.MESSAGING, EventSource.REQUEST_CONTENT)
-                        .setEventData(eventData)
-                        .build();
-
-        MobileCore.dispatchEvent(refreshMessageEvent);
+        IamRefreshHandler.INSTANCE.refreshInAppMessages(null);
     }
 
     /**

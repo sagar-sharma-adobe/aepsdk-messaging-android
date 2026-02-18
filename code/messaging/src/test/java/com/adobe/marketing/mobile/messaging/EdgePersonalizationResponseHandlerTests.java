@@ -375,6 +375,68 @@ public class EdgePersonalizationResponseHandlerTests {
                     Map<String, List<Surface>> requestedSurfaces =
                             edgePersonalizationResponseHandler.getRequestedSurfacesForEventId();
                     assertNull(requestedSurfaces.get(fetchMessagesEventId));
+
+                    // verify serial work dispatcher is resumed when API fails
+                    verify(mockSerialWorkDispatcher, times(1)).resume();
+                });
+    }
+
+    @Test
+    public void test_fetchMessages_AdobeErrorReceived_InvokesCompletionCallbackAndRemovesHandler() {
+        runUsingMockedServiceProvider(
+                () -> {
+                    // setup
+                    String edgeRequestEventId = "mockEventId";
+                    when(mockMessagingExtension.completionHandlerForEdgeRequestEventId(
+                                    eq(edgeRequestEventId)))
+                            .thenReturn(completionHandler);
+
+                    // test
+                    edgePersonalizationResponseHandler.fetchPropositions(mockEvent, null);
+
+                    Event edgeRequestEvent = eventArgumentCaptor.getValue();
+                    assertEquals(
+                            MessagingTestConstants.EventName.REFRESH_MESSAGES_EVENT,
+                            edgeRequestEvent.getName());
+
+                    // simulate API failure via AdobeCallbackWithError.fail()
+                    adobeCallbackWithErrorArgumentCaptor.getValue().fail(mockAdobeError);
+
+                    // verify completion callback invoked with false when API fails
+                    verify(mockAdobeCallback, times(1)).call(false);
+
+                    // verify completion handler was retrieved/removed from list for this edge
+                    // request event id
+                    verify(mockMessagingExtension, times(1))
+                            .completionHandlerForEdgeRequestEventId(edgeRequestEventId);
+
+                    // verify serial work dispatcher is resumed on failure
+                    verify(mockSerialWorkDispatcher, times(1)).resume();
+                });
+    }
+
+    @Test
+    public void test_fetchMessages_AdobeErrorReceived_NoCompletionHandler_ResumesDispatcher() {
+        runUsingMockedServiceProvider(
+                () -> {
+                    // setup - no completion handler registered for edge request (e.g. already
+                    // removed or never added)
+                    when(mockMessagingExtension.completionHandlerForEdgeRequestEventId(anyString()))
+                            .thenReturn(null);
+
+                    // test
+                    edgePersonalizationResponseHandler.fetchPropositions(mockEvent, null);
+                    adobeCallbackWithErrorArgumentCaptor.getValue().fail(mockAdobeError);
+
+                    // verify completion callback not invoked when no handler found
+                    verifyNoInteractions(mockAdobeCallback);
+
+                    // verify completion handler was still looked up for removal
+                    verify(mockMessagingExtension, times(1))
+                            .completionHandlerForEdgeRequestEventId(anyString());
+
+                    // verify serial work dispatcher is resumed even when no handler
+                    verify(mockSerialWorkDispatcher, times(1)).resume();
                 });
     }
 
